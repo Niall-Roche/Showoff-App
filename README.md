@@ -22,3 +22,13 @@ npm run lint
 
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
+
+### Resources
+
+https://vuejs.org/v2/guide/
+
+https://vuejs.org/v2/cookbook/adding-instance-properties.html
+
+https://scotch.io/tutorials/handling-authentication-in-vue-using-vuex
+
+https://bootstrap-vue.js.org/

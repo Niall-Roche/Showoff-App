@@ -1,27 +1,40 @@
 import Vue from 'vue';
-import VueRouter from 'vue-router';
-import Home from '../views/Home.vue';
+import Router from 'vue-router';
 
-Vue.use(VueRouter);
+import Widgets from '@/components/Widgets.vue';
+import Login from '@/components/Login.vue';
 
-const routes = [
-  {
-    path: '/',
-    name: 'home',
-    component: Home,
-  },
-  {
-    path: '/about',
-    name: 'about',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/About.vue'),
-  },
-];
+Vue.use(Router);
 
-const router = new VueRouter({
-  routes,
+const router = new Router({
+  routes: [
+    {
+      path: '/',
+      name: 'widgets',
+      component: Widgets,
+      // meta: {
+      //   requiresAuth: true,
+      // },
+    },
+    {
+      path: '/login',
+      name: 'login',
+      component: Login,
+    },
+  ],
+});
+
+router.beforeEach((to, from, next) => {
+  if (to.matched.some(record => record.meta.requiresAuth)) {
+    // TODO replace with isLoggedIn
+    // if (true) {
+    //   next()
+    //   return
+    // }
+    next('/login');
+  } else {
+    next();
+  }
 });
 
 export default router;

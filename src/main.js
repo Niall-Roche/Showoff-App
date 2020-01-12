@@ -1,9 +1,25 @@
 import Vue from 'vue';
+import Axios from 'axios';
+import { BootstrapVue } from 'bootstrap-vue';
 import App from './App.vue';
 import router from './router';
 import store from './store';
 
+Vue.prototype.$http = Axios;
+
+const token = localStorage.getItem('token');
+if (token) {
+  Vue.prototype.$http.defaults.headers.common.Authorization = token;
+}
+
 Vue.config.productionTip = false;
+
+Vue.prototype.$clientId = process.env.VUE_APP_CLIENT_ID;
+Vue.prototype.$clientSecret = process.env.VUE_APP_CLIENT_SECRET;
+Vue.prototype.$http.defaults.baseURL = process.env.VUE_APP_BASE_URL;
+
+Vue.use(BootstrapVue);
+require('./styles/app.scss');
 
 new Vue({
   router,
