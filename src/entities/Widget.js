@@ -8,6 +8,10 @@ export default class Widget {
     this.owner = owner;
   }
 
+  getUser() {
+    return this.user;
+  }
+
   getUserName() {
     return this.user ? this.user.getName() : null;
   }
