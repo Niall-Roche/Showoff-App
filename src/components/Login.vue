@@ -141,6 +141,7 @@ export default {
         this.$nextTick(() => {
           this.$refs.modal.hide();
           this.makeToast('Success', 'Successfully Logged Out');
+          this.$router.push('/');
         });
       });
       // this.$http.post('/oauth/revoke', {
