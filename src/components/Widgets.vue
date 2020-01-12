@@ -24,12 +24,16 @@
         class="widgets-table"
         show-empty
         striped hover
-        :items="items"
+        :fields="fields"
+        :items="widgets"
         :busy="busy">
           <template v-slot:cell(user)="data">
             <!-- `data.value` is the value after formatted by the Formatter -->
             <!-- <a :href="`#${data.value.replace(/[^a-z]+/i,'-')}`">{{ data.value }}</a> -->
             <a href="https://www.google.com">{{ data.value.getName() }}</a>
+          </template>
+          <template v-if="$store.getters.isLoggedIn" v-slot:cell(actions)="data">
+            <b-button variant="info">Edit</b-button>
           </template>
           <template v-slot:table-busy>
           <div class="text-center text-danger my-2">
@@ -49,26 +53,12 @@ export default {
   name: 'widgets',
   mixins: [WidgetManager],
   props: {
-    items: Array,
+    widgets: Array,
+    fields: Array,
     busy: Boolean,
   },
   data() {
     return {
-      // items: [],
-      fields: [
-        {
-          key: 'id',
-          label: 'Widget Id',
-        },
-        {
-          key: 'description',
-          label: 'Description',
-        },
-        {
-          key: 'user',
-          label: 'Widget Owner',
-        },
-      ],
       filter: '',
     };
   },

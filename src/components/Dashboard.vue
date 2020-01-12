@@ -1,6 +1,6 @@
 <template>
   <b-container class="dashboard-main">
-    <widgetsTable :busy="isBusy" :items="widgets" @filterChange="loadWidgets"></widgetsTable>
+    <widgetsTable :busy="isBusy" :fields="fields" :widgets="widgets" @filterChange="loadWidgets"></widgetsTable>
     <b-button v-if="$store.getters.isLoggedIn">View My Widgets</b-button>
   </b-container>
 </template>
@@ -14,6 +14,24 @@ export default {
   data() {
     return {
       widgets: [],
+      fields: [
+        {
+          key: 'id',
+          label: 'Widget Id',
+        },
+        {
+          key: 'description',
+          label: 'Description',
+        },
+        {
+          key: 'user',
+          label: 'Widget Owner',
+        },
+        // {
+        //   key: 'actions',
+        //   label: 'Actions',
+        // },
+      ],
       isBusy: false,
     };
   },
