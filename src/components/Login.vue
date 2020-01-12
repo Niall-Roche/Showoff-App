@@ -2,18 +2,18 @@
   <b-navbar-nav class="ml-auto">
     <b-nav-item-dropdown right>
       <template v-slot:button-content>
-      <em>User</em>
+      <em>{{ usernameDisplay }}</em>
       </template>
       <template v-if="$store.getters.isLoggedIn">
         <b-dropdown-item href="#">Profile</b-dropdown-item>
-        <b-dropdown-item href="#">Sign Out</b-dropdown-item>
+        <b-dropdown-item @click="signOut">Sign Out</b-dropdown-item>
       </template>
       <template v-else>
         <b-dropdown-item v-b-modal.login-modal href="#">Login</b-dropdown-item>
       </template>
     </b-nav-item-dropdown>
 
-    <b-modal ok-title="Submit" @ok="submit" id="login-modal" centered :title="login ? 'Login' : 'Register'">
+    <b-modal ref="modal" ok-title="Submit" @ok="submit" id="login-modal" centered :title="login ? 'Login' : 'Register'">
       <b-row>
         <b-container>
           <b-form>
@@ -64,8 +64,11 @@
 </template>
 
 <script>
+import utils from '@/mixins/utils';
+
 export default {
   name: 'login',
+  mixins: [utils],
   data() {
     return {
       login: true,
@@ -75,35 +78,41 @@ export default {
       password: '',
     };
   },
-  methods: {
-    makeToast(title, content, error) {
-      this.$bvToast.toast(content, {
-        title,
-        variant: error ? 'danger' : 'info',
-        autoHideDelay: 5000,
-      });
+  computed: {
+    usernameDisplay() {
+      return this.$store.getters.isLoggedIn ? localStorage.getItem('username') : 'User';
     },
-
+  },
+  methods: {
     submit() {
       const clientId = this.$clientId;
       const clientSecret = this.$clientSecret;
 
       if (this.login) {
-        this.$http.post('/oauth/token', {
-          grant_type: 'password',
-          client_id: clientId,
-          client_secret: clientSecret,
-          username: this.email,
-          password: this.password,
-        }).then(({ data }) => {
-          if (data.code === 0) {
-            // TODO
-          } else {
-            this.makeToast('Error', data.message, true);
-          }
-        }).catch((err) => {
-          this.makeToast('Error', err.message, true);
+        this.$store.dispatch('login', {
+          sessionId: 'abcdefg12344',
+          username: 'niallroche',
+        }).then(() => {
+          this.$nextTick(() => {
+            this.$refs.modal.hide();
+            this.makeToast('Success', 'Successfully Logged In');
+          });
         });
+        // this.$http.post('/oauth/token', {
+        //   grant_type: 'password',
+        //   client_id: clientId,
+        //   client_secret: clientSecret,
+        //   username: this.email,
+        //   password: this.password,
+        // }).then(({ data }) => {
+        //   if (data.code === 0) {
+        //     // TODO
+        //   } else {
+        //     this.makeToast('Error', data.message, true);
+        //   }
+        // }).catch((err) => {
+        //   this.makeToast('Error', err.message, true);
+        // });
       } else {
         this.$http.post('/api/v1/users', {
           client_id: clientId,
@@ -125,6 +134,31 @@ export default {
           this.makeToast('Error', err.message, true);
         });
       }
+    },
+
+    signOut() {
+      this.$store.dispatch('logout').then(() => {
+        this.$nextTick(() => {
+          this.$refs.modal.hide();
+          this.makeToast('Success', 'Successfully Logged Out');
+        });
+      });
+      // this.$http.post('/oauth/revoke', {
+      //   token: localStorage.getItem('token'),
+      // }).then(({ data }) => {
+      //   if (data.code === 0) {
+      //     this.$store.dispatch('logout').then(() => {
+      //       this.$nextTick(() => {
+      //         this.$refs.modal.hide();
+      //         this.makeToast('Success', 'Successfully Logged Out');
+      //       });
+      //     });
+      //   } else {
+      //     this.makeToast('Error', data.message, true);
+      //   }
+      // }).catch((err) => {
+      //   this.makeToast('Error', err.message, true);
+      // });
     },
   },
 };

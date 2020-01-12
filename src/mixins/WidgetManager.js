@@ -1,13 +1,16 @@
 import Widget from '@/entities/Widget';
 import User from '@/entities/User';
+import utils from '@/mixins/utils';
 
 export default {
+  mixins: [utils],
   methods: {
     getVisibleWidgets(term) {
       return new Promise((resolve, reject) => {
         this.$http.get('/api/v1/widgets/visible', {
           params: {
             client_id: this.$clientId,
+            // client_id: '1234',
             client_secret: this.$clientSecret,
             term,
           },
@@ -36,6 +39,8 @@ export default {
           } else {
             reject(data.message);
           }
+        }).catch((err) => {
+          this.makeToast('Error', err.message, true);
         });
       });
     },

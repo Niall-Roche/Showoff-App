@@ -9,7 +9,8 @@ const LOGOUT = 'LOGOUT';
 
 export default new Vuex.Store({
   state: {
-    isLoggedIn: !!localStorage.getItem('session'),
+    isLoggedIn: !!localStorage.getItem('token'),
+    // username: localStorage.getItem('username'),
   },
 
   mutations: {
@@ -29,22 +30,26 @@ export default new Vuex.Store({
     login({ commit }, creds) {
       commit(LOGIN);
       return new Promise((resolve) => {
-        setTimeout(() => {
-          localStorage.setItem('session', creds.sessionId);
-          localStorage.setItem('username', creds.username);
-          commit(LOGIN_SUCCESS);
-          resolve();
-        }, 1000);
+        // setTimeout(() => {
+        localStorage.setItem('token', creds.sessionId);
+        localStorage.setItem('username', creds.username);
+        commit(LOGIN_SUCCESS);
+        resolve();
+        // }, 1000);
       });
     },
     logout({ commit }) {
-      localStorage.removeItem('session');
-      localStorage.removeItem('username');
-      commit(LOGOUT);
+      return new Promise((resolve) => {
+        localStorage.removeItem('token');
+        localStorage.removeItem('username');
+        commit(LOGOUT);
+        resolve();
+      });
     },
   },
 
   getters: {
     isLoggedIn: state => state.isLoggedIn,
+    // getUsername: state => state.username,
   },
 });

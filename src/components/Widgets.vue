@@ -1,5 +1,5 @@
 <template>
-    <b-container class="widgets-main">
+    <div>
       <b-row align-v="center">
         <b-col sm="8">
             <b-form-group class="mb-0">
@@ -25,7 +25,7 @@
         show-empty
         striped hover
         :items="items"
-        :busy="isBusy">
+        :busy="busy">
           <template v-slot:cell(user)="data">
             <!-- `data.value` is the value after formatted by the Formatter -->
             <!-- <a :href="`#${data.value.replace(/[^a-z]+/i,'-')}`">{{ data.value }}</a> -->
@@ -38,7 +38,7 @@
           </div>
         </template>
       </b-table>
-    </b-container>
+    </div>
 </template>
 
 <script>
@@ -48,9 +48,13 @@ import WidgetManager from '@/mixins/WidgetManager';
 export default {
   name: 'widgets',
   mixins: [WidgetManager],
+  props: {
+    items: Array,
+    busy: Boolean,
+  },
   data() {
     return {
-      items: [],
+      // items: [],
       fields: [
         {
           key: 'id',
@@ -66,30 +70,12 @@ export default {
         },
       ],
       filter: '',
-      isBusy: false,
     };
   },
   watch: {
     filter(val) {
-      this.loadWidgets(val);
+      this.$emit('filterChange', val);
     },
-  },
-  methods: {
-    loadWidgets(searchTerm) {
-      this.isBusy = true;
-      this.getVisibleWidgets(searchTerm)
-        .then((widgets) => {
-          this.items = widgets.map(widget => ({
-            id: widget.id,
-            description: widget.description,
-            user: widget.getUser(),
-          }));
-          this.isBusy = false;
-        });
-    },
-  },
-  mounted() {
-    this.loadWidgets();
   },
 };
 </script>
