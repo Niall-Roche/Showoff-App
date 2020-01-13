@@ -16,7 +16,7 @@
     <b-modal ref="modal" ok-title="Submit" id="login-modal" centered :title="login ? 'Login' : 'Register'">
       <b-row>
         <b-container>
-          <b-form ref="login">
+          <b-form ref="login" @submit="submit">
             <b-form-group v-if="!login" id="input-group-1" label="First Name:" label-for="first-name">
               <b-form-input
                 id="first-name"
@@ -80,7 +80,7 @@
                 <b-button @click="passwordReset" variant="link">Forgotten Password?</b-button>
               </b-button-group>
             </b-row>
-            <b-button type="submit" variant="primary" class="float-right" @click="submit">Submit</b-button>
+            <b-button type="submit" variant="primary" class="float-right">Submit</b-button>
           </b-form>
         </b-container>
       </b-row>
@@ -104,10 +104,7 @@ export default {
       lastName: '',
       email: '',
       password: '',
-      // validFirstName: null,
-      // validLastName: null,
       validEmail: null,
-      // validPassword: null,
     };
   },
   computed: {
@@ -124,14 +121,11 @@ export default {
       this.lastName = '';
       this.email = '';
       this.password = '';
-      // this.validFirstName = null;
-      // this.validLastName = null;
       this.validEmail = null;
-      // this.validPassword = null;
     },
 
     /*
-    * Validate the emai field
+    * Validate the email field
     */
     email(val) {
       if (val.length > 0) {
@@ -156,57 +150,51 @@ export default {
       const clientId = this.$clientId;
       const clientSecret = this.$clientSecret;
 
-      debugger;
-
-      if (this.validateFields()) {
-        if (this.login) {
-          this.$store.dispatch('login', {
-            sessionId: 'abcdefg12344',
-            username: 'niallroche',
-          }).then(() => {
-            this.$nextTick(() => {
-              this.$refs.modal.hide();
-              this.makeToast('Success', 'Successfully Logged In');
-            });
+      if (this.login) {
+        this.$store.dispatch('login', {
+          sessionId: 'abcdefg12344',
+          username: 'niallroche',
+        }).then(() => {
+          this.$nextTick(() => {
+            this.$refs.modal.hide();
+            this.makeToast('Success', 'Successfully Logged In');
           });
-          // this.$http.post('/oauth/token', {
-          //   grant_type: 'password',
-          //   client_id: clientId,
-          //   client_secret: clientSecret,
-          //   username: this.email,
-          //   password: this.password,
-          // }).then(({ data }) => {
-          //   if (data.code === 0) {
-          //     // TODO
-          //   } else {
-          //     this.makeToast('Error', data.message, true);
-          //   }
-          // }).catch((err) => {
-          //   this.makeToast('Error', err.message, true);
-          // });
-        } else {
-          this.$http.post('/api/v1/users', {
-            client_id: clientId,
-            client_secret: clientSecret,
-            user: {
-              first_name: this.firstName,
-              last_name: this.lastName,
-              password: this.password,
-              email: this.email,
-              image_url: 'https://static.thenounproject.com/png/961-200.png',
-            },
-          }).then(({ data }) => {
-            if (data.code === 0) {
-              // TODO
-            } else {
-              this.makeToast('Error', data.message, true);
-            }
-          }).catch((err) => {
-            this.makeToast('Error', err.message, true);
-          });
-        }
+        });
+        // this.$http.post('/oauth/token', {
+        //   grant_type: 'password',
+        //   client_id: clientId,
+        //   client_secret: clientSecret,
+        //   username: this.email,
+        //   password: this.password,
+        // }).then(({ data }) => {
+        //   if (data.code === 0) {
+        //     // TODO
+        //   } else {
+        //     this.makeToast('Error', data.message, true);
+        //   }
+        // }).catch((err) => {
+        //   this.makeToast('Error', err.message, true);
+        // });
       } else {
-        this.makeToast('Error', 'Please Check Fields');
+        this.$http.post('/api/v1/users', {
+          client_id: clientId,
+          client_secret: clientSecret,
+          user: {
+            first_name: this.firstName,
+            last_name: this.lastName,
+            password: this.password,
+            email: this.email,
+            image_url: 'https://static.thenounproject.com/png/961-200.png',
+          },
+        }).then(({ data }) => {
+          if (data.code === 0) {
+            // TODO
+          } else {
+            this.makeToast('Error', data.message, true);
+          }
+        }).catch((err) => {
+          this.makeToast('Error', err.message, true);
+        });
       }
     },
 
@@ -215,7 +203,9 @@ export default {
         this.$nextTick(() => {
           this.$refs.modal.hide();
           this.makeToast('Success', 'Successfully Logged Out');
-          this.$router.push('/');
+          if (this.$router.currentRoute.name !== 'dashboard') {
+            this.$router.push('/');
+          }
         });
       });
       // this.$http.post('/oauth/revoke', {
@@ -237,7 +227,13 @@ export default {
     },
 
     passwordReset() {
-      debugger;
+      // this.$http('/api/v1/users/reset_password', {
+      //   user: {
+      //     email: this,
+      //   },
+      //   client_id: '{{client_id}}',
+      //   client_secret: '{{client_secret}}',
+      // });
     },
   },
 };
