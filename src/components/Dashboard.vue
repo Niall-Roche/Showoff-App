@@ -52,7 +52,7 @@ export default {
           }));
           this.isBusy = false;
         }).catch((err) => {
-          this.makeToast('Error', err.message, true);
+          this.makeToast('Error', err, true);
         });
     },
   },

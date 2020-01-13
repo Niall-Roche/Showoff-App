@@ -29,13 +29,23 @@ export default {
       }
     });
 
-    this.$http.interceptors.response.use(undefined, err => new Promise((resolve, reject) => {
+    const errorHandler = (err) => {
       if (err.response.status === 401) {
         this.$store.dispatch('logout');
-        reject(err);
+        if (this.$router.currentRoute.name !== 'dashboard') {
+          this.$router.push('/');
+        }
+        err.message = 'Whoops! Looks like you need to login.';
       }
-      resolve();
-    }));
+      return Promise.reject(err);
+    };
+
+    const successHandler = response => Promise.resolve(response.data);
+
+    this.$http.interceptors.response.use(
+      response => successHandler(response),
+      error => errorHandler(error),
+    );
   },
 };
 </script>

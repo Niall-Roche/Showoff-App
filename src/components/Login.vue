@@ -13,11 +13,11 @@
       </template>
     </b-nav-item-dropdown>
 
-    <b-modal ref="modal" ok-title="Submit" @ok="submit" id="login-modal" centered :title="login ? 'Login' : 'Register'">
+    <b-modal ref="modal" ok-title="Submit" id="login-modal" centered :title="login ? 'Login' : 'Register'">
       <b-row>
         <b-container>
-          <b-form>
-            <b-form-group v-show="!login" id="input-group-1" label="First Name:" label-for="first-name">
+          <b-form ref="login">
+            <b-form-group v-if="!login" id="input-group-1" label="First Name:" label-for="first-name">
               <b-form-input
                 id="first-name"
                 v-model="firstName"
@@ -25,8 +25,11 @@
                 required
                 placeholder="Enter First Name">
               </b-form-input>
+              <b-form-invalid-feedback id="input-live-feedback">
+                First name is required
+              </b-form-invalid-feedback>
             </b-form-group>
-            <b-form-group v-show="!login" id="input-group-2" label="Last Name:" label-for="last-name">
+            <b-form-group v-if="!login" id="input-group-2" label="Last Name:" label-for="last-name">
               <b-form-input
                 id="last-name"
                 v-model="lastName"
@@ -34,15 +37,30 @@
                 required
                 placeholder="Enter Last Name">
               </b-form-input>
+              <b-form-invalid-feedback id="input-live-feedback">
+                Last name is required
+              </b-form-invalid-feedback>
             </b-form-group>
             <b-form-group id="input-group-3" label="Email address:" label-for="email">
               <b-form-input
                 id="email"
                 v-model="email"
                 type="email"
+                :state="!login ? validEmail : null"
+                aria-describedby="input-live-feedback input-live-available-feedback"
+                debounce="500"
                 required
                 placeholder="Enter Email">
               </b-form-input>
+
+              <b-form-invalid-feedback id="input-live-feedback">
+                Enter a valid email
+              </b-form-invalid-feedback>
+
+              <b-form-valid-feedback id="input-live-available-feedback">
+                Available
+              </b-form-valid-feedback>
+
             </b-form-group>
             <b-form-group id="input-group-4" label="Password:" label-for="password">
               <b-form-input
@@ -52,13 +70,23 @@
                 required
                 placeholder="Enter Password">
               </b-form-input>
+              <b-form-invalid-feedback id="input-live-feedback">
+                Password is required
+              </b-form-invalid-feedback>
             </b-form-group>
+            <b-row>
+              <b-button-group size="sm">
+                <b-button @click="login=!login" variant="link">{{ login ? 'Register' : 'Login' }}</b-button>
+                <b-button @click="passwordReset" variant="link">Forgotten Password?</b-button>
+              </b-button-group>
+            </b-row>
+            <b-button type="submit" variant="primary" class="float-right" @click="submit">Submit</b-button>
           </b-form>
         </b-container>
       </b-row>
-      <b-row>
-        <b-button @click="login=!login" variant="link">{{ login ? 'Register' : 'Login' }}</b-button>
-      </b-row>
+      <template v-slot:modal-footer>
+        <div></div>
+      </template>
     </b-modal>
   </b-navbar-nav>
 </template>
@@ -76,6 +104,10 @@ export default {
       lastName: '',
       email: '',
       password: '',
+      // validFirstName: null,
+      // validLastName: null,
+      validEmail: null,
+      // validPassword: null,
     };
   },
   computed: {
@@ -83,56 +115,98 @@ export default {
       return this.$store.getters.isLoggedIn ? localStorage.getItem('username') : 'User';
     },
   },
+  watch: {
+    /*
+    * Reset all values when switching views
+    */
+    login() {
+      this.firstName = '';
+      this.lastName = '';
+      this.email = '';
+      this.password = '';
+      // this.validFirstName = null;
+      // this.validLastName = null;
+      this.validEmail = null;
+      // this.validPassword = null;
+    },
+
+    /*
+    * Validate the emai field
+    */
+    email(val) {
+      if (val.length > 0) {
+        if (!this.login) {
+          this.$http('/api/v1/users/email', {
+            params: {
+              client_id: this.$clientId,
+              client_secret: this.$clientSecret,
+              email: this.email,
+            },
+          }).then(({ code, data }) => {
+            this.validEmail = code === 0 ? data.available : false;
+          });
+        }
+      } else {
+        this.validEmail = false;
+      }
+    },
+  },
   methods: {
     submit() {
       const clientId = this.$clientId;
       const clientSecret = this.$clientSecret;
 
-      if (this.login) {
-        this.$store.dispatch('login', {
-          sessionId: 'abcdefg12344',
-          username: 'niallroche',
-        }).then(() => {
-          this.$nextTick(() => {
-            this.$refs.modal.hide();
-            this.makeToast('Success', 'Successfully Logged In');
+      debugger;
+
+      if (this.validateFields()) {
+        if (this.login) {
+          this.$store.dispatch('login', {
+            sessionId: 'abcdefg12344',
+            username: 'niallroche',
+          }).then(() => {
+            this.$nextTick(() => {
+              this.$refs.modal.hide();
+              this.makeToast('Success', 'Successfully Logged In');
+            });
           });
-        });
-        // this.$http.post('/oauth/token', {
-        //   grant_type: 'password',
-        //   client_id: clientId,
-        //   client_secret: clientSecret,
-        //   username: this.email,
-        //   password: this.password,
-        // }).then(({ data }) => {
-        //   if (data.code === 0) {
-        //     // TODO
-        //   } else {
-        //     this.makeToast('Error', data.message, true);
-        //   }
-        // }).catch((err) => {
-        //   this.makeToast('Error', err.message, true);
-        // });
+          // this.$http.post('/oauth/token', {
+          //   grant_type: 'password',
+          //   client_id: clientId,
+          //   client_secret: clientSecret,
+          //   username: this.email,
+          //   password: this.password,
+          // }).then(({ data }) => {
+          //   if (data.code === 0) {
+          //     // TODO
+          //   } else {
+          //     this.makeToast('Error', data.message, true);
+          //   }
+          // }).catch((err) => {
+          //   this.makeToast('Error', err.message, true);
+          // });
+        } else {
+          this.$http.post('/api/v1/users', {
+            client_id: clientId,
+            client_secret: clientSecret,
+            user: {
+              first_name: this.firstName,
+              last_name: this.lastName,
+              password: this.password,
+              email: this.email,
+              image_url: 'https://static.thenounproject.com/png/961-200.png',
+            },
+          }).then(({ data }) => {
+            if (data.code === 0) {
+              // TODO
+            } else {
+              this.makeToast('Error', data.message, true);
+            }
+          }).catch((err) => {
+            this.makeToast('Error', err.message, true);
+          });
+        }
       } else {
-        this.$http.post('/api/v1/users', {
-          client_id: clientId,
-          client_secret: clientSecret,
-          user: {
-            first_name: this.firstName,
-            last_name: this.lastName,
-            password: this.password,
-            email: this.email,
-            image_url: 'https://static.thenounproject.com/png/961-200.png',
-          },
-        }).then(({ data }) => {
-          if (data.code === 0) {
-            // TODO
-          } else {
-            this.makeToast('Error', data.message, true);
-          }
-        }).catch((err) => {
-          this.makeToast('Error', err.message, true);
-        });
+        this.makeToast('Error', 'Please Check Fields');
       }
     },
 
@@ -160,6 +234,10 @@ export default {
       // }).catch((err) => {
       //   this.makeToast('Error', err.message, true);
       // });
+    },
+
+    passwordReset() {
+      debugger;
     },
   },
 };

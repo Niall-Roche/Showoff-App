@@ -14,9 +14,9 @@ export default {
             client_secret: this.$clientSecret,
             term,
           },
-        }).then(({ data }) => {
-          if (data.code === 0) {
-            const widgets = data.data.widgets.map((widget) => {
+        }).then(({ code, message, data }) => {
+          if (code === 0) {
+            const widgets = data.widgets.map((widget) => {
               const user = new User(
                 widget.user.id,
                 widget.user.first_name,
@@ -37,7 +37,7 @@ export default {
 
             resolve(widgets);
           } else {
-            reject(data.message);
+            reject(message);
           }
         }).catch((err) => {
           this.makeToast('Error', err.message, true);
