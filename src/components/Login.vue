@@ -46,7 +46,7 @@
                 id="email"
                 v-model="email"
                 type="email"
-                :state="!login ? validEmail : null"
+                :state="!login && !forgotten ? validEmail : null"
                 aria-describedby="input-live-feedback input-live-available-feedback"
                 debounce="500"
                 required
@@ -120,11 +120,13 @@ export default {
     * Reset all values when switching views
     */
     login() {
-      this.firstName = '';
-      this.lastName = '';
-      this.email = '';
-      this.password = '';
-      this.validEmail = null;
+      if (!this.forgotten) {
+        this.firstName = '';
+        this.lastName = '';
+        this.email = '';
+        this.password = '';
+        this.validEmail = null;
+      }
     },
 
     /*
@@ -132,7 +134,7 @@ export default {
     */
     email(val) {
       if (val.length > 0) {
-        if (!this.login) {
+        if (!this.forgotten && !this.login) {
           this.$http('/api/v1/users/email', {
             params: {
               client_id: this.$clientId,
@@ -150,55 +152,62 @@ export default {
   },
   methods: {
     submit() {
-      const clientId = this.$clientId;
-      const clientSecret = this.$clientSecret;
-
-      if (this.login) {
-        this.$store.dispatch('login', {
-          sessionId: 'abcdefg12344',
-          username: 'niallroche',
-        }).then(() => {
-          this.$nextTick(() => {
-            this.$refs.modal.hide();
-            this.makeToast('Success', 'Successfully Logged In');
-          });
-        });
-        // this.$http.post('/oauth/token', {
-        //   grant_type: 'password',
-        //   client_id: clientId,
-        //   client_secret: clientSecret,
-        //   username: this.email,
-        //   password: this.password,
-        // }).then(({ data }) => {
-        //   if (data.code === 0) {
-        //     // TODO
-        //   } else {
-        //     this.makeToast('Error', data.message, true);
-        //   }
-        // }).catch((err) => {
-        //   this.makeToast('Error', err.message, true);
-        // });
+      if (this.forgotten) {
+        this.passwordReset();
+      } else if (this.login) {
+        this.loginRequest();
       } else {
-        this.$http.post('/api/v1/users', {
-          client_id: clientId,
-          client_secret: clientSecret,
-          user: {
-            first_name: this.firstName,
-            last_name: this.lastName,
-            password: this.password,
-            email: this.email,
-            image_url: 'https://static.thenounproject.com/png/961-200.png',
-          },
-        }).then(({ data }) => {
-          if (data.code === 0) {
-            // TODO
-          } else {
-            this.makeToast('Error', data.message, true);
-          }
-        }).catch((err) => {
-          this.makeToast('Error', err.message, true);
-        });
+        this.registerRequest();
       }
+    },
+
+    loginRequest() {
+      this.$store.dispatch('login', {
+        sessionId: 'abcdefg12344',
+        username: 'niallroche',
+      }).then(() => {
+        this.$nextTick(() => {
+          this.$refs.modal.hide();
+          this.makeToast('Success', 'Successfully Logged In');
+        });
+      });
+      // this.$http.post('/oauth/token', {
+      //   grant_type: 'password',
+      //   client_id: this.$clientId,
+      //   client_secret: this.$clientSecret,
+      //   username: this.email,
+      //   password: this.password,
+      // }).then(({ data }) => {
+      //   if (data.code === 0) {
+      //     // TODO
+      //   } else {
+      //     this.makeToast('Error', data.message, true);
+      //   }
+      // }).catch((err) => {
+      //   this.makeToast('Error', err.message, true);
+      // });
+    },
+
+    registerRequest() {
+      this.$http.post('/api/v1/users', {
+        client_id: this.$clientId,
+        client_secret: this.$clientSecret,
+        user: {
+          first_name: this.firstName,
+          last_name: this.lastName,
+          password: this.password,
+          email: this.email,
+          image_url: 'https://static.thenounproject.com/png/961-200.png',
+        },
+      }).then(({ data }) => {
+        if (data.code === 0) {
+          // TODO
+        } else {
+          this.makeToast('Error', data.message, true);
+        }
+      }).catch((err) => {
+        this.makeToast('Error', err.message, true);
+      });
     },
 
     signOut() {
@@ -230,13 +239,15 @@ export default {
     },
 
     passwordReset() {
-      // this.$http('/api/v1/users/reset_password', {
-      //   user: {
-      //     email: this,
-      //   },
-      //   client_id: '{{client_id}}',
-      //   client_secret: '{{client_secret}}',
-      // });
+      this.$http.post('/api/v1/users/reset_password', {
+        user: {
+          email: this.email,
+        },
+        client_id: this.$clientId,
+        client_secret: this.$clientSecret,
+      }).then(({ code, message }) => {
+        this.makeToast(code === 0 ? 'Success' : 'Error', message, code !== 0);
+      }).catch(err => this.makeToast('Error', err.message, true));
     },
 
     loginOrRegister() {

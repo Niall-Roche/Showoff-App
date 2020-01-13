@@ -35,9 +35,10 @@ export default {
         if (this.$router.currentRoute.name !== 'dashboard') {
           this.$router.push('/');
         }
-        err.message = 'Whoops! Looks like you need to login.';
+      } else if (err.response.status === 500) {
+        return Promise.reject(err);
       }
-      return Promise.reject(err);
+      return Promise.reject(err.response.data);
     };
 
     const successHandler = response => Promise.resolve(response.data);
