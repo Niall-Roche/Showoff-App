@@ -1,6 +1,6 @@
 <template>
   <b-container class="my-widgets-main">
-    <h2 class="text-center">Dashboard Widgets</h2>
+    <h3 class="text-center">My Widgets</h3>
     <widgetsTable :busy="isBusy" :fields="fields" :widgets="widgets" @filterChange="loadWidgets"></widgetsTable>
   </b-container>
 </template>

@@ -1,6 +1,6 @@
 <template>
   <b-navbar type="dark" variant="dark">
-     <b-navbar-brand href="#">Showoff App</b-navbar-brand>
+     <b-navbar-brand href="/">Showoff App</b-navbar-brand>
      <login></login>
   </b-navbar>
 </template>

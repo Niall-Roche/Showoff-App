@@ -1,6 +1,6 @@
 <template>
   <b-container class="dashboard-main">
-    <h2 class="text-center">Dashboard Widgets</h2>
+    <h3 class="text-center">Dashboard Widgets</h3>
     <widgetsTable :busy="isBusy" :fields="fields" :widgets="widgets" @filterChange="loadWidgets"></widgetsTable>
     <b-button to="/widgets/me" v-if="$store.getters.isLoggedIn">View My Widgets</b-button>
   </b-container>
