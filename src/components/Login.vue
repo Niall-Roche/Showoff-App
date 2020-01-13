@@ -17,7 +17,7 @@
       <b-row>
         <b-container>
           <b-form ref="login" @submit="submit">
-            <b-form-group v-if="!login" id="input-group-1" label="First Name:" label-for="first-name">
+            <b-form-group v-if="!forgotten && !login" id="input-group-1" label="First Name:" label-for="first-name">
               <b-form-input
                 id="first-name"
                 v-model="firstName"
@@ -29,7 +29,7 @@
                 First name is required
               </b-form-invalid-feedback>
             </b-form-group>
-            <b-form-group v-if="!login" id="input-group-2" label="Last Name:" label-for="last-name">
+            <b-form-group v-if="!forgotten && !login" id="input-group-2" label="Last Name:" label-for="last-name">
               <b-form-input
                 id="last-name"
                 v-model="lastName"
@@ -62,7 +62,7 @@
               </b-form-valid-feedback>
 
             </b-form-group>
-            <b-form-group id="input-group-4" label="Password:" label-for="password">
+            <b-form-group v-if="!forgotten" id="input-group-4" label="Password:" label-for="password">
               <b-form-input
                 id="password"
                 v-model="password"
@@ -76,8 +76,10 @@
             </b-form-group>
             <b-row>
               <b-button-group size="sm">
-                <b-button @click="login=!login" variant="link">{{ login ? 'Register' : 'Login' }}</b-button>
-                <b-button @click="passwordReset" variant="link">Forgotten Password?</b-button>
+                <b-button @click="loginOrRegister" variant="link">
+                  {{ login ? 'Register' : 'Login' }}
+                </b-button>
+                <b-button :hidden="forgotten" @click="onForgotten" variant="link">Forgot Password?</b-button>
               </b-button-group>
             </b-row>
             <b-button type="submit" variant="primary" class="float-right">Submit</b-button>
@@ -105,6 +107,7 @@ export default {
       email: '',
       password: '',
       validEmail: null,
+      forgotten: false,
     };
   },
   computed: {
@@ -234,6 +237,16 @@ export default {
       //   client_id: '{{client_id}}',
       //   client_secret: '{{client_secret}}',
       // });
+    },
+
+    loginOrRegister() {
+      this.login = !this.login;
+      this.forgotten = false;
+    },
+
+    onForgotten() {
+      this.forgotten = !this.forgotten;
+      this.login = false;
     },
   },
 };
