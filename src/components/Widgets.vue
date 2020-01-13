@@ -33,7 +33,18 @@
             <a href="https://www.google.com">{{ data.value.getName() }}</a>
           </template>
           <template v-if="$store.getters.isLoggedIn" v-slot:cell(actions)="data">
-            <b-button variant="info">Edit</b-button>
+            <!-- <b-button variant="info">Edit</b-button> -->
+            <b-dropdown class="m-md-2">
+              <template v-slot:button-content>
+                <b-icon icon="gear-fill" aria-hidden="true"></b-icon> Actions
+              </template>
+              <b-dropdown-item-button to="/" variant="info">
+                <b-icon icon="pencil" aria-hidden="true"></b-icon> Edit
+              </b-dropdown-item-button>
+              <b-dropdown-item-button variant="danger">
+                <b-icon icon="trash" aria-hidden="true"></b-icon> Delete
+              </b-dropdown-item-button>
+            </b-dropdown>
           </template>
           <template v-slot:table-busy>
           <div class="text-center text-danger my-2">

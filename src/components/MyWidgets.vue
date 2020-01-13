@@ -2,6 +2,12 @@
   <b-container class="my-widgets-main">
     <h3 class="text-center">My Widgets</h3>
     <widgetsTable :busy="isBusy" :fields="fields" :widgets="widgets" @filterChange="loadWidgets"></widgetsTable>
+    <!-- <b-button variant="primary">
+      <b-icon font-scale="2" icon="plus" aria-hidden="true"></b-icon> New Widget
+    </b-button> -->
+    <b-button to="/widgets/create" variant="primary" class="mb-2">
+      New Widget <b-icon icon="plus"></b-icon>
+    </b-button>
   </b-container>
 </template>
 
@@ -26,10 +32,6 @@ export default {
         {
           key: 'description',
           label: 'Description',
-        },
-        {
-          key: 'user',
-          label: 'Widget Owner',
         },
         {
           key: 'actions',

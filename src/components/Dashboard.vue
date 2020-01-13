@@ -2,7 +2,6 @@
   <b-container class="dashboard-main">
     <h3 class="text-center">Dashboard Widgets</h3>
     <widgetsTable :busy="isBusy" :fields="fields" :widgets="widgets" @filterChange="loadWidgets"></widgetsTable>
-    <b-button to="/widgets/me" v-if="$store.getters.isLoggedIn">View My Widgets</b-button>
   </b-container>
 </template>
 
@@ -28,10 +27,6 @@ export default {
           key: 'user',
           label: 'Widget Owner',
         },
-        // {
-        //   key: 'actions',
-        //   label: 'Actions',
-        // },
       ],
       isBusy: false,
     };

@@ -238,6 +238,9 @@ export default {
       // });
     },
 
+    /*
+    * Forgotten password request
+    */
     passwordReset() {
       this.$http.post('/api/v1/users/reset_password', {
         user: {
