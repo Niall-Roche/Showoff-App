@@ -34,11 +34,14 @@
 </template>
 
 <script>
+import widgetManager from '@/mixins/WidgetManager';
+
 export default {
   name: 'widget',
+  mixins: [widgetManager],
   data() {
     return {
-      title: 'Widget',
+      widgetId: null,
       name: '',
       description: '',
       kind: 'visible',
@@ -48,13 +51,25 @@ export default {
       ],
     };
   },
+  computed: {
+    title() {
+      return this.widgetId ? 'Edit Widget' : 'Create Widget';
+    },
+  },
   methods: {
     submit() {
       debugger;
     },
   },
-  created() {
-    console.log(this.$router.params);
+  async created() {
+    this.widgetId = this.$route.params.id;
+    if (this.widgetId) {
+      // TODO GET WIDGET BY ID
+      const widgets = await this.getVisibleWidgets().catch(err => this.makeToast('Error', err.message, true));
+      this.name = widgets[0].id;
+      this.description = widgets[0].description;
+      this.kind = widgets[0].kind;
+    }
   },
 };
 </script>

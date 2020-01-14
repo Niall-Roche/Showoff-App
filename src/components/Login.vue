@@ -215,7 +215,7 @@ export default {
         this.$nextTick(() => {
           this.$refs.modal.hide();
           this.makeToast('Success', 'Successfully Logged Out');
-          if (this.$router.currentRoute.name !== 'dashboard') {
+          if (this.$route.name !== 'dashboard') {
             this.$router.push('/');
           }
         });

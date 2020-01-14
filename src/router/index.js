@@ -33,7 +33,7 @@ const router = new Router({
     {
       path: '/widgets/edit/:id',
       name: 'edit',
-      component: MyWidgets,
+      component: Widget,
       meta: {
         requiresAuth: true,
       },

@@ -32,7 +32,7 @@ export default {
     const errorHandler = (err) => {
       if (err.response.status === 401) {
         this.$store.dispatch('logout');
-        if (this.$router.currentRoute.name !== 'dashboard') {
+        if (this.$route.name !== 'dashboard') {
           this.$router.push('/');
         }
       } else if (err.response.status === 500) {
