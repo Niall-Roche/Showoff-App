@@ -38,10 +38,10 @@
               <template v-slot:button-content>
                 <b-icon icon="gear-fill" aria-hidden="true"></b-icon> Actions
               </template>
-              <b-dropdown-item-button @click="onEdit(data.item.id)" variant="info">
+              <b-dropdown-item-button @click="$emit('editClick', data.item.id)" variant="info">
                 <b-icon icon="pencil" aria-hidden="true"></b-icon> Edit
               </b-dropdown-item-button>
-              <b-dropdown-item-button variant="danger">
+              <b-dropdown-item-button @click="$emit('deleteClick', data.item.id)" variant="danger">
                 <b-icon icon="trash" aria-hidden="true"></b-icon> Delete
               </b-dropdown-item-button>
             </b-dropdown>
@@ -76,11 +76,6 @@ export default {
   watch: {
     filter(val) {
       this.$emit('filterChange', val);
-    },
-  },
-  methods: {
-    onEdit(id) {
-      this.$router.push(`/widgets/edit/${id}`);
     },
   },
 };

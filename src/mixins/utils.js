@@ -7,5 +7,9 @@ export default {
         autoHideDelay: 5000,
       });
     },
+
+    handleErr(err) {
+      this.makeToast('Error', err.message, true);
+    },
   },
 };

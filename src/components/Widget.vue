@@ -65,22 +65,26 @@ export default {
       };
 
       if (this.widgetId) {
-        this.updateWidget(this.widgetId, widget).then(({ code }) => {
+        this.updateWidget(this.widgetId, widget).then(({ code, message }) => {
           if (code === 0) {
             // TODO Toast not showing
             this.makeToast('Success', 'Successfully Updated Widget');
             this.$nextTick(() => {
               this.$router.push('/widgets/me');
             });
+          } else {
+            this.makeToast('Error', message, true);
           }
-        });
+        }).catch(({ err }) => this.makeToast('Error', err.message, true));
       } else {
-        this.createWidget({ ...widget, kind: this.kind }).then(({ code }) => {
+        this.createWidget({ ...widget, kind: this.kind }).then(({ code, message }) => {
           if (code === 0) {
             this.$router.push('/widgets/me');
             this.makeToast('Success', 'Successfully Created New Widget');
+          } else {
+            this.makeToast('Error', message, true);
           }
-        });
+        }).catch(({ err }) => this.makeToast('Error', err.message, true));
       }
     },
   },

@@ -30,6 +30,10 @@ export default {
       return this.$http.put(`/api/v1/widgets/${id}`, { widget });
     },
 
+    deleteWidget(id) {
+      return this.$http.delete(`/api/v1/widgets/${id}`);
+    },
+
     getWidgets(url, term) {
       return new Promise((resolve, reject) => {
         this.$http.get(url, {
@@ -45,9 +49,7 @@ export default {
           } else {
             reject(message);
           }
-        }).catch((err) => {
-          this.makeToast('Error', err.message, true);
-        });
+        }).catch(this.handleErr);
       });
     },
   },

@@ -1,7 +1,14 @@
 <template>
   <b-container class="my-widgets-main">
     <h3 class="text-center">My Widgets</h3>
-    <widgetsTable :busy="isBusy" :fields="fields" :widgets="widgets" @filterChange="loadWidgets"></widgetsTable>
+    <widgetsTable
+      :busy="isBusy"
+      :fields="fields"
+      :widgets="widgets"
+      @filterChange="loadWidgets"
+      @editClick="onEdit"
+      @deleteClick="onDelete">
+    </widgetsTable>
     <!-- <b-button variant="primary">
       <b-icon font-scale="2" icon="plus" aria-hidden="true"></b-icon> New Widget
     </b-button> -->
@@ -52,9 +59,23 @@ export default {
         .then((widgets) => {
           this.widgets = widgets;
           this.isBusy = false;
-        }).catch((err) => {
-          this.makeToast('Error', err.message, true);
-        });
+        }).catch(this.handleErr);
+    },
+
+    onEdit(id) {
+      this.$router.push(`/widgets/edit/${id}`);
+    },
+
+    onDelete(id) {
+      this.deleteWidget(id)
+        .then(({ code, message }) => {
+          if (code === 0) {
+            this.makeToast('Success', 'Widget Was Removed Successfully');
+            this.loadWidgets();
+          } else {
+            this.makeToast('Error', message, true);
+          }
+        }).catch(this.handleErr);
     },
   },
   mounted() {
