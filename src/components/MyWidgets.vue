@@ -26,8 +26,8 @@ export default {
       widgets: [],
       fields: [
         {
-          key: 'id',
-          label: 'Widget Id',
+          key: 'name',
+          label: 'Widget Name',
         },
         {
           key: 'description',
@@ -50,12 +50,7 @@ export default {
       this.isBusy = true;
       this.getMyWidgets(searchTerm)
         .then((widgets) => {
-          this.widgets = widgets.map(widget => ({
-            id: widget.id,
-            description: widget.description,
-            kind: widget.kind,
-            user: widget.getUser(),
-          }));
+          this.widgets = widgets;
           this.isBusy = false;
         }).catch((err) => {
           this.makeToast('Error', err.message, true);

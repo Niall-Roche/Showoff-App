@@ -29,6 +29,15 @@ export default {
       }
     });
 
+    // Request Interceptor
+    this.$http.interceptors.request.use((config) => {
+      config.headers.Authorization = localStorage.getItem('token')
+        ? `${localStorage.getItem('token_kind')} ${localStorage.getItem('token')}`
+        : null;
+      return config;
+    },
+    error => Promise.reject(error));
+
     const errorHandler = (err) => {
       if (err.response.status === 401) {
         this.$store.dispatch('logout');
@@ -43,6 +52,7 @@ export default {
 
     const successHandler = response => Promise.resolve(response.data);
 
+    // Response Interceptor
     this.$http.interceptors.response.use(
       response => successHandler(response),
       error => errorHandler(error),
