@@ -10,6 +10,8 @@ const LOGOUT = 'LOGOUT';
 export default new Vuex.Store({
   state: {
     isLoggedIn: !!localStorage.getItem('token'),
+    authToken: `${localStorage.getItem('token_kind')} ${localStorage.getItem('token')}`,
+    refreshToken: localStorage.getItem('refresh_token'),
     // username: localStorage.getItem('username'),
   },
 
@@ -27,20 +29,22 @@ export default new Vuex.Store({
   },
 
   actions: {
-    login({ commit }, creds) {
+    login({ commit }, { token, user }) {
       commit(LOGIN);
       return new Promise((resolve) => {
-        // setTimeout(() => {
-        localStorage.setItem('token', creds.sessionId);
-        localStorage.setItem('username', creds.username);
+        localStorage.setItem('token', token.access_token);
+        localStorage.setItem('token_kind', token.token_type);
+        localStorage.setItem('refresh_token', token.refresh_token);
+        localStorage.setItem('username', user.email);
         commit(LOGIN_SUCCESS);
         resolve();
-        // }, 1000);
       });
     },
     logout({ commit }) {
       return new Promise((resolve) => {
         localStorage.removeItem('token');
+        localStorage.removeItem('token_kind');
+        localStorage.removeItem('refresh_token');
         localStorage.removeItem('username');
         commit(LOGOUT);
         resolve();
@@ -50,6 +54,8 @@ export default new Vuex.Store({
 
   getters: {
     isLoggedIn: state => state.isLoggedIn,
+    authToken: state => state.authToken,
+    refreshToken: state => state.refreshToken,
     // getUsername: state => state.username,
   },
 });

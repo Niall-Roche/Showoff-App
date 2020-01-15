@@ -34,6 +34,10 @@ export default {
           label: 'Description',
         },
         {
+          key: 'kind',
+          label: 'Widget Type',
+        },
+        {
           key: 'actions',
           label: 'Actions',
         },
@@ -44,11 +48,12 @@ export default {
   methods: {
     loadWidgets(searchTerm) {
       this.isBusy = true;
-      this.getVisibleWidgets(searchTerm)
+      this.getMyWidgets(searchTerm)
         .then((widgets) => {
           this.widgets = widgets.map(widget => ({
             id: widget.id,
             description: widget.description,
+            kind: widget.kind,
             user: widget.getUser(),
           }));
           this.isBusy = false;

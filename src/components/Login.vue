@@ -162,30 +162,39 @@ export default {
     },
 
     loginRequest() {
-      this.$store.dispatch('login', {
-        sessionId: 'abcdefg12344',
-        username: 'niallroche',
-      }).then(() => {
-        this.$nextTick(() => {
-          this.$refs.modal.hide();
-          this.makeToast('Success', 'Successfully Logged In');
-        });
-      });
-      // this.$http.post('/oauth/token', {
-      //   grant_type: 'password',
-      //   client_id: this.$clientId,
-      //   client_secret: this.$clientSecret,
-      //   username: this.email,
-      //   password: this.password,
-      // }).then(({ data }) => {
-      //   if (data.code === 0) {
-      //     // TODO
-      //   } else {
-      //     this.makeToast('Error', data.message, true);
-      //   }
-      // }).catch((err) => {
-      //   this.makeToast('Error', err.message, true);
+      // this.$store.dispatch('login', {
+      //   sessionId: 'abcdefg12344',
+      //   username: 'niallroche',
+      // }).then(() => {
+      //   this.$nextTick(() => {
+      //     this.$refs.modal.hide();
+      //     this.makeToast('Success', 'Successfully Logged In');
+      //   });
       // });
+      this.$http.post('/oauth/token', {
+        grant_type: 'password',
+        client_id: this.$clientId,
+        client_secret: this.$clientSecret,
+        username: this.email,
+        password: this.password,
+      }).then(({ code, data }) => {
+        if (code === 0) {
+          const { token } = data;
+          this.$store.dispatch('login', {
+            token,
+            user: {
+              email: this.email,
+            },
+          }).then(() => {
+            this.$http.defaults.headers.common.Authorization = this.$store.getters.authToken;
+            this.closeModal('Successfully Logged In');
+          });
+        } else {
+          this.makeToast('Error', data.message, true);
+        }
+      }).catch((err) => {
+        this.makeToast('Error', err.message, true);
+      });
     },
 
     registerRequest() {
@@ -199,9 +208,16 @@ export default {
           email: this.email,
           image_url: 'https://static.thenounproject.com/png/961-200.png',
         },
-      }).then(({ data }) => {
-        if (data.code === 0) {
-          // TODO
+      }).then(({ code, data }) => {
+        if (code === 0) {
+          const { token, user } = data;
+          this.$store.dispatch('login', {
+            token,
+            user,
+          }).then(() => {
+            this.$http.defaults.headers.common.Authorization = this.$store.getters.authToken;
+            this.closeModal('Successfully Created An Account');
+          });
         } else {
           this.makeToast('Error', data.message, true);
         }
@@ -211,15 +227,10 @@ export default {
     },
 
     signOut() {
-      this.$store.dispatch('logout').then(() => {
-        this.$nextTick(() => {
-          this.$refs.modal.hide();
-          this.makeToast('Success', 'Successfully Logged Out');
-          if (this.$route.name !== 'dashboard') {
-            this.$router.push('/');
-          }
-        });
-      });
+      this.$store.dispatch('logout');
+      this.closeModal('Successfully Logged Out');
+
+
       // this.$http.post('/oauth/revoke', {
       //   token: localStorage.getItem('token'),
       // }).then(({ data }) => {
@@ -236,6 +247,16 @@ export default {
       // }).catch((err) => {
       //   this.makeToast('Error', err.message, true);
       // });
+    },
+
+    closeModal(msg) {
+      this.$nextTick(() => {
+        this.$refs.modal.hide();
+        this.makeToast('Success', msg);
+        if (this.$route.name !== 'dashboard') {
+          this.$router.push('/');
+        }
+      });
     },
 
     /*

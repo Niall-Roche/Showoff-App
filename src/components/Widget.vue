@@ -24,11 +24,12 @@
         <b-form-radio-group
           id="radio-group-1"
           v-model="kind"
+          :disabled="!!this.widgetId"
           :options="options"
           name="radio-options"
         ></b-form-radio-group>
       </b-form-group>
-      <b-button type="submit" variant="primary" class="float-right">Submit</b-button>
+      <b-button type="submit" variant="primary" class="float-right">Save</b-button>
     </b-form>
   </b-container>
 </template>
@@ -58,17 +59,40 @@ export default {
   },
   methods: {
     submit() {
-      debugger;
+      const widget = {
+        name: this.name,
+        description: this.description,
+      };
+
+      if (this.widgetId) {
+        this.updateWidget(this.widgetId, widget).then(({ code }) => {
+          if (code === 0) {
+            // TODO Toast not showing
+            this.makeToast('Success', 'Successfully Updated Widget');
+            this.$nextTick(() => {
+              this.$router.push('/widgets/me');
+            });
+          }
+        });
+      } else {
+        this.createWidget({ ...widget, kind: this.kind }).then(({ code }) => {
+          if (code === 0) {
+            this.$router.push('/widgets/me');
+            this.makeToast('Success', 'Successfully Created New Widget');
+          }
+        });
+      }
     },
   },
   async created() {
     this.widgetId = this.$route.params.id;
     if (this.widgetId) {
-      // TODO GET WIDGET BY ID
-      const widgets = await this.getVisibleWidgets().catch(err => this.makeToast('Error', err.message, true));
-      this.name = widgets[0].id;
-      this.description = widgets[0].description;
-      this.kind = widgets[0].kind;
+      this.getWidgetById(this.widgetId)
+        .then((widget) => {
+          this.name = widget.name;
+          this.description = widget.description;
+          this.kind = widget.kind;
+        });
     }
   },
 };
