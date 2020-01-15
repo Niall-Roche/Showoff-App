@@ -13,7 +13,12 @@
       </template>
     </b-nav-item-dropdown>
 
-    <b-modal ref="modal" ok-title="Submit" id="login-modal" centered :title="login ? 'Login' : 'Register'">
+    <b-modal
+      ref="modal"
+      ok-title="Submit"
+      id="login-modal"
+      centered
+      :title="forgotten ? 'Forgot Password' : login ? 'Login' : 'Register'">
       <b-row>
         <b-container>
           <b-form ref="login" @submit="submit">
@@ -82,7 +87,10 @@
                 <b-button :hidden="forgotten" @click="onForgotten" variant="link">Forgot Password?</b-button>
               </b-button-group>
             </b-row>
-            <b-button type="submit" variant="primary" class="float-right">Submit</b-button>
+            <b-button type="submit" variant="primary" class="float-right">
+              <b-spinner v-show="submitting" small></b-spinner>
+              <span v-show="!submitting">Submit</span>
+            </b-button>
           </b-form>
         </b-container>
       </b-row>
@@ -108,6 +116,7 @@ export default {
       password: '',
       validEmail: null,
       forgotten: false,
+      submitting: false,
     };
   },
   computed: {
@@ -151,27 +160,20 @@ export default {
     },
   },
   methods: {
-    submit() {
+    async submit() {
+      this.submitting = true;
       if (this.forgotten) {
-        this.passwordReset();
+        await this.passwordReset();
       } else if (this.login) {
-        this.loginRequest();
+        await this.loginRequest();
       } else {
-        this.registerRequest();
+        await this.registerRequest();
       }
+      this.submitting = false;
     },
 
     loginRequest() {
-      // this.$store.dispatch('login', {
-      //   sessionId: 'abcdefg12344',
-      //   username: 'niallroche',
-      // }).then(() => {
-      //   this.$nextTick(() => {
-      //     this.$refs.modal.hide();
-      //     this.makeToast('Success', 'Successfully Logged In');
-      //   });
-      // });
-      this.$http.post('/oauth/token', {
+      return this.$http.post('/oauth/token', {
         grant_type: 'password',
         client_id: this.$clientId,
         client_secret: this.$clientSecret,
@@ -198,7 +200,7 @@ export default {
     },
 
     registerRequest() {
-      this.$http.post('/api/v1/users', {
+      return this.$http.post('/api/v1/users', {
         client_id: this.$clientId,
         client_secret: this.$clientSecret,
         user: {
@@ -227,26 +229,25 @@ export default {
     },
 
     signOut() {
-      this.$store.dispatch('logout');
-      this.closeModal('Successfully Logged Out');
-
-
-      // this.$http.post('/oauth/revoke', {
-      //   token: localStorage.getItem('token'),
-      // }).then(({ data }) => {
-      //   if (data.code === 0) {
-      //     this.$store.dispatch('logout').then(() => {
-      //       this.$nextTick(() => {
-      //         this.$refs.modal.hide();
-      //         this.makeToast('Success', 'Successfully Logged Out');
-      //       });
-      //     });
-      //   } else {
-      //     this.makeToast('Error', data.message, true);
-      //   }
-      // }).catch((err) => {
-      //   this.makeToast('Error', err.message, true);
-      // });
+      this.$http.post('/oauth/revoke', {
+        token: localStorage.getItem('token'),
+      }).then(({ code, message }) => {
+        if (code === 0) {
+          this.$store.dispatch('logout').then(() => {
+            this.$nextTick(() => {
+              this.$refs.modal.hide();
+              this.makeToast('Success', 'Successfully Logged Out');
+              if (this.$route.name !== 'dashboard') {
+                this.$router.push('/');
+              }
+            });
+          });
+        } else {
+          this.makeToast('Error', message, true);
+        }
+      }).catch((err) => {
+        this.makeToast('Error', err.message, true);
+      });
     },
 
     closeModal(msg) {
@@ -263,7 +264,7 @@ export default {
     * Forgotten password request
     */
     passwordReset() {
-      this.$http.post('/api/v1/users/reset_password', {
+      return this.$http.post('/api/v1/users/reset_password', {
         user: {
           email: this.email,
         },
@@ -271,6 +272,7 @@ export default {
         client_secret: this.$clientSecret,
       }).then(({ code, message }) => {
         this.makeToast(code === 0 ? 'Success' : 'Error', message, code !== 0);
+        this.$refs.modal.hide();
       }).catch(err => this.makeToast('Error', err.message, true));
     },
 
