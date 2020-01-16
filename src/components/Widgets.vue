@@ -58,11 +58,8 @@
 
 <script>
 
-import WidgetManager from '@/mixins/WidgetManager';
-
 export default {
   name: 'widgets',
-  mixins: [WidgetManager],
   props: {
     widgets: Array,
     fields: Array,
