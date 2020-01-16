@@ -9,9 +9,6 @@
       @editClick="onEdit"
       @deleteClick="onDelete">
     </widgetsTable>
-    <!-- <b-button variant="primary">
-      <b-icon font-scale="2" icon="plus" aria-hidden="true"></b-icon> New Widget
-    </b-button> -->
     <b-button to="/widgets/create" variant="primary" class="mb-2">
       New Widget <b-icon icon="plus"></b-icon>
     </b-button>

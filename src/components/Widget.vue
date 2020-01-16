@@ -11,7 +11,7 @@
           placeholder="Enter Name">
         </b-form-input>
       </b-form-group>
-      <b-form-group id="input-group-1" label="Description:" label-for="description">
+      <b-form-group id="input-group-2" label="Description:" label-for="description">
         <b-form-input
           id="description"
           v-model="description"
@@ -20,15 +20,14 @@
           placeholder="Enter Description">
         </b-form-input>
       </b-form-group>
-      <b-form-group label="What kind of widget?">
-        <b-form-radio-group
-          id="radio-group-1"
-          v-model="kind"
-          :disabled="!!this.widgetId"
-          :options="options"
-          name="radio-options"
-        ></b-form-radio-group>
-      </b-form-group>
+      <b-container>
+        <b-row sm>
+          <h5 class="mt-3">{{ (hide ? "Show" : "Hide") + " This Widget?" }}</h5>
+        </b-row>
+        <b-row>
+          <b-button :pressed.sync="hide" variant="primary">{{ hide ? "Show" : "Hide" }}</b-button>
+        </b-row>
+      </b-container>
       <b-button type="submit" variant="primary" class="float-right">Save</b-button>
     </b-form>
   </b-container>
@@ -45,11 +44,7 @@ export default {
       widgetId: null,
       name: '',
       description: '',
-      kind: 'visible',
-      options: [
-        { text: 'Visible', value: 'visible' },
-        { text: 'Hidden', value: 'hidden' },
-      ],
+      hide: false,
     };
   },
   computed: {
@@ -77,7 +72,7 @@ export default {
           }
         }).catch(({ err }) => this.makeToast('Error', err.message, true));
       } else {
-        this.createWidget({ ...widget, kind: this.kind }).then(({ code, message }) => {
+        this.createWidget({ ...widget, kind: this.hide ? 'hidden' : 'visible' }).then(({ code, message }) => {
           if (code === 0) {
             this.$router.push('/widgets/me');
             this.makeToast('Success', 'Successfully Created New Widget');

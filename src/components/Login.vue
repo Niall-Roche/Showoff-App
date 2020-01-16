@@ -152,7 +152,7 @@ export default {
             },
           }).then(({ code, data }) => {
             this.validEmail = code === 0 ? data.available : false;
-          });
+          }).catch(this.handleErr);
         }
       } else {
         this.validEmail = false;
@@ -188,15 +188,12 @@ export default {
               email: this.email,
             },
           }).then(() => {
-            this.$http.defaults.headers.common.Authorization = this.$store.getters.authToken;
             this.closeModal('Successfully Logged In');
           });
         } else {
           this.makeToast('Error', data.message, true);
         }
-      }).catch((err) => {
-        this.makeToast('Error', err.message, true);
-      });
+      }).catch(this.handleErr);
     },
 
     registerRequest() {
@@ -217,15 +214,12 @@ export default {
             token,
             user,
           }).then(() => {
-            this.$http.defaults.headers.common.Authorization = this.$store.getters.authToken;
             this.closeModal('Successfully Created An Account');
           });
         } else {
           this.makeToast('Error', data.message, true);
         }
-      }).catch((err) => {
-        this.makeToast('Error', err.message, true);
-      });
+      }).catch(this.handleErr);
     },
 
     signOut() {
@@ -245,9 +239,7 @@ export default {
         } else {
           this.makeToast('Error', message, true);
         }
-      }).catch((err) => {
-        this.makeToast('Error', err.message, true);
-      });
+      }).catch(this.handleErr);
     },
 
     closeModal(msg) {
@@ -273,7 +265,7 @@ export default {
       }).then(({ code, message }) => {
         this.makeToast(code === 0 ? 'Success' : 'Error', message, code !== 0);
         this.$refs.modal.hide();
-      }).catch(err => this.makeToast('Error', err.message, true));
+      }).catch(this.handleErr);
     },
 
     loginOrRegister() {
