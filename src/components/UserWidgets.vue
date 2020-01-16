@@ -7,9 +7,6 @@
       :widgets="widgets"
       @filterChange="loadWidgets">
     </widgetsTable>
-    <b-button to="/widgets/create" variant="primary" class="mb-2">
-      New Widget <b-icon icon="plus"></b-icon>
-    </b-button>
   </b-container>
 </template>
 

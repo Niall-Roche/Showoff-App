@@ -29,7 +29,7 @@
         :busy="busy">
           <template v-slot:cell(user)="data">
             <b-button variant="link" @click="$router.push(`/users/${data.value.id}/widgets`)">
-              {{ data.value.getName() }}
+              {{ data.value.name }}
             </b-button>
           </template>
           <template v-if="$store.getters.isLoggedIn" v-slot:cell(actions)="data">

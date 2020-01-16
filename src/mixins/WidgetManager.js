@@ -1,4 +1,3 @@
-import Widget from '@/entities/Widget';
 import utils from '@/mixins/utils';
 
 
@@ -34,22 +33,20 @@ export default {
     },
 
     getWidgets(url, term) {
-      return new Promise((resolve, reject) => {
-        this.$http.get(url, {
-          params: {
-            client_id: this.$clientId,
-            // client_id: '1234',
-            client_secret: this.$clientSecret,
-            term,
-          },
-        }).then(({ code, message, data }) => {
-          if (code === 0) {
-            resolve(data.widget ? new Widget(data.widget) : data.widgets.map(widget => new Widget(widget)));
-          } else {
-            reject(message);
-          }
-        }).catch(this.handleErr);
-      });
+      return this.$http.get(url, {
+        params: {
+          client_id: this.$clientId,
+          // client_id: '1234',
+          client_secret: this.$clientSecret,
+          term,
+        },
+      }).then(({ code, message, data }) => {
+        if (code === 0) {
+          const { widget, widgets } = data;
+          return Promise.resolve(widget || widgets);
+        }
+        return Promise.reject(message);
+      }).catch(this.handleErr);
     },
   },
 };
