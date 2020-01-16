@@ -1,7 +1,7 @@
 <template>
   <b-container class="my-widgets-main">
     <b-row>
-      <b-col sm="4">
+      <b-col md="4">
         <b-card
           :title="fullName"
           :img-src="imageSrc"
@@ -12,8 +12,8 @@
           class="mb-2">
         </b-card>
       </b-col>
-      <b-col sm="8">
-        <h3 class="text-center">{{ fullName }}'s Widgets</h3>
+      <b-col md="8">
+        <h3 class="text-center">{{ fullName + '\'' + (fullName.endsWith('s') ? '' : 's') }} Widgets</h3>
         <widgetsTable
           :busy="isBusy"
           :fields="fields"

@@ -1,5 +1,5 @@
 <template>
-  <b-navbar type="dark" variant="dark">
+  <b-navbar toggleable="md" type="dark" variant="dark">
      <b-navbar-brand href="/">Showoff App</b-navbar-brand>
      <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
 
