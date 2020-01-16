@@ -60,6 +60,7 @@ export default {
   methods: {
     loadWidgets(searchTerm) {
       this.isBusy = true;
+      // calls mixin function (mixins/widgetmanager)
       this.getUserWidgets(this.userId, searchTerm)
         .then((widgets) => {
           this.widgets = widgets;
@@ -69,7 +70,9 @@ export default {
   },
   mounted() {
     this.userId = this.$route.params.id;
+    // calls mixin function (mixins/usermanager)
     this.getUserById(this.userId)
+      // passed to mixin function (mixins/usermanager)
       .then(this.handleUserData)
       .catch(this.handleErr);
     this.loadWidgets();

@@ -52,6 +52,7 @@ export default {
   methods: {
     loadWidgets(searchTerm) {
       this.isBusy = true;
+      // calls mixin function (mixins/widgetmanager)
       this.getMyWidgets(searchTerm)
         .then((widgets) => {
           this.widgets = widgets;
@@ -64,6 +65,7 @@ export default {
     },
 
     onDelete(id) {
+      // calls mixin function (mixins/widgetmanager)
       this.deleteWidget(id)
         .then(({ code, message }) => {
           if (code === 0) {

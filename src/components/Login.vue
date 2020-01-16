@@ -13,6 +13,10 @@
       </template>
     </b-nav-item-dropdown>
 
+    <!--
+    LOGIN MODAL
+    HANDLES REGISTRATION AND USER LOGIN
+    -->
     <b-modal
       ref="modal"
       ok-title="Submit"
@@ -173,6 +177,7 @@ export default {
     },
 
     loginRequest() {
+      // calls mixin function (mixins/usermanager)
       return this.loginUser(this.email, this.password)
         .then(({ code, data }) => {
           if (code === 0) {
@@ -192,6 +197,7 @@ export default {
     },
 
     registerRequest() {
+      // calls mixin function (mixins/usermanager)
       return this.register(this.firstName, this.lastName, this.email, this.password)
         .then(({ code, data }) => {
           if (code === 0) {
@@ -242,6 +248,7 @@ export default {
     * Forgotten password request
     */
     passwordReset() {
+      // calls mixin function (mixins/usermanager)
       return this.resetPassword({ email: this.email })
         .then(({ code, message }) => {
           this.makeToast(code === 0 ? 'Success' : 'Error', message, code !== 0);

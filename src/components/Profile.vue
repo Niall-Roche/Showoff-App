@@ -104,6 +104,7 @@ export default {
   },
   methods: {
     submit() {
+      // calls mixin function (mixins/usermanager)
       this.updateProfile({
         first_name: this.firstName,
         last_name: this.lastName,
@@ -119,6 +120,7 @@ export default {
     },
 
     submitPasswordChange() {
+      // calls mixin function (mixins/usermanager)
       this.changePassword({ current_password: this.current, new_password: this.newPassword })
         .then(({ code, message, data }) => {
           if (code === 0) {
@@ -136,7 +138,9 @@ export default {
     },
   },
   mounted() {
+    // calls mixin function (mixins/usermanager)
     this.getMyProfile()
+    // passed to mixin function (mixins/usermanager)
       .then(this.handleUserData)
       .catch(this.handleErr);
   },

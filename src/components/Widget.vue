@@ -60,6 +60,7 @@ export default {
       };
 
       if (this.widgetId) {
+        // calls mixin function (mixins/widgetmanager)
         this.updateWidget(this.widgetId, widget).then(({ code, message }) => {
           if (code === 0) {
             this.$router.push('/widgets/me', () => this.makeToast('Success', 'Successfully Updated Widget'));
@@ -68,6 +69,7 @@ export default {
           }
         }).catch(({ err }) => this.makeToast('Error', err.message, true));
       } else {
+        // calls mixin function (mixins/widgetmanager)
         this.createWidget({ ...widget, kind: this.hide ? 'hidden' : 'visible' }).then(({ code, message }) => {
           if (code === 0) {
             this.$router.push('/widgets/me', () => this.makeToast('Success', 'Successfully Created New Widget'));
@@ -81,6 +83,7 @@ export default {
   created() {
     this.widgetId = this.$route.params.id;
     if (this.widgetId) {
+      // calls mixin function (mixins/widgetmanager)
       this.getWidgetById(this.widgetId)
         .then((widget) => {
           this.name = widget.name;
