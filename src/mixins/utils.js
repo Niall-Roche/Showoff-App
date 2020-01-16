@@ -1,7 +1,8 @@
 export default {
   methods: {
     makeToast(title, content, error) {
-      this.$bvToast.toast(content, {
+      // Calling $bvToast at the root level means toasts will persist on route changes
+      this.$root.$bvToast.toast(content, {
         title,
         variant: error ? 'danger' : 'info',
         autoHideDelay: 5000,

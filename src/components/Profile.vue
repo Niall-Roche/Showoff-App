@@ -21,14 +21,13 @@
           placeholder="Enter Last Name">
         </b-form-input>
       </b-form-group>
-
+      <b-img width="75" height="75" class="m1" :src="imageSrc" alt="Circle image"></b-img>
       <b-form-group id="input-group-3" label="Image URL:" label-for="image">
         <b-form-input
           id="image"
           v-model="image"
           type="text"
-          required
-          placeholder="Enter Image URL">
+          placeholder="Enter an image URL to change your profile picture">
         </b-form-input>
       </b-form-group>
 
@@ -49,11 +48,23 @@ export default {
       lastName: '',
       dob: null,
       image: '',
+      imageSrc: '',
     };
   },
   methods: {
     submit() {
-      // TODO
+      this.updateProfile({
+        first_name: this.firstName,
+        last_name: this.lastName,
+        date_of_birth: this.dob,
+        image_url: this.image,
+      }).then(({ code, message }) => {
+        if (code === 0) {
+          this.$router.push('/', () => this.makeToast('Success', 'Profile Successfully Updated'));
+        } else {
+          this.makeToast('Error', message, true);
+        }
+      }).catch(this.handleErr);
     },
   },
   created() {
@@ -63,6 +74,7 @@ export default {
           const { user } = data;
           this.firstName = user.first_name;
           this.lastName = user.last_name;
+          this.imageSrc = user.images.original_url;
         } else {
           this.makeToast('Error', message, true);
         }

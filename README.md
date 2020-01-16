@@ -42,3 +42,7 @@ https://dev.to/teroauralinna/global-http-request-and-response-handling-with-the-
 https://sequelize.org/v5/identifiers.html
 
 https://stackoverflow.com/questions/52737078/how-can-you-use-axios-interceptors
+
+https://router.vuejs.org/guide/advanced/navigation-guards.html#in-component-guards
+
+https://github.com/bootstrap-vue/bootstrap-vue/issues/3934
