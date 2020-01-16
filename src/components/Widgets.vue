@@ -28,9 +28,9 @@
         :items="widgets"
         :busy="busy">
           <template v-slot:cell(user)="data">
-            <!-- `data.value` is the value after formatted by the Formatter -->
-            <!-- <a :href="`#${data.value.replace(/[^a-z]+/i,'-')}`">{{ data.value }}</a> -->
-            <a href="https://www.google.com">{{ data.value.getName() }}</a>
+            <b-button variant="link" @click="$router.push(`/users/${data.value.id}/widgets`)">
+              {{ data.value.getName() }}
+            </b-button>
           </template>
           <template v-if="$store.getters.isLoggedIn" v-slot:cell(actions)="data">
             <!-- <b-button variant="info">Edit</b-button> -->

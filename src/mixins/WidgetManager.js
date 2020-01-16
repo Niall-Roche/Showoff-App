@@ -1,5 +1,4 @@
 import Widget from '@/entities/Widget';
-// import User from '@/entities/User';
 import utils from '@/mixins/utils';
 
 

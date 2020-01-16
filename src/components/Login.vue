@@ -5,7 +5,7 @@
       <em>{{ usernameDisplay }}</em>
       </template>
       <template v-if="$store.getters.isLoggedIn">
-        <b-dropdown-item href="#">Profile</b-dropdown-item>
+        <b-dropdown-item @click="$router.push('/users/me')">Profile</b-dropdown-item>
         <b-dropdown-item @click="signOut">Sign Out</b-dropdown-item>
       </template>
       <template v-else>
@@ -173,53 +173,39 @@ export default {
     },
 
     loginRequest() {
-      return this.$http.post('/oauth/token', {
-        grant_type: 'password',
-        client_id: this.$clientId,
-        client_secret: this.$clientSecret,
-        username: this.email,
-        password: this.password,
-      }).then(({ code, data }) => {
-        if (code === 0) {
-          const { token } = data;
-          this.$store.dispatch('login', {
-            token,
-            user: {
-              email: this.email,
-            },
-          }).then(() => {
-            this.closeModal('Successfully Logged In');
-          });
-        } else {
-          this.makeToast('Error', data.message, true);
-        }
-      }).catch(this.handleErr);
+      return this.login(this.email, this.password)
+        .then(({ code, data }) => {
+          if (code === 0) {
+            const { token } = data;
+            this.$store.dispatch('login', {
+              token,
+              user: {
+                email: this.email,
+              },
+            }).then(() => {
+              this.closeModal('Successfully Logged In');
+            });
+          } else {
+            this.makeToast('Error', data.message, true);
+          }
+        }).catch(this.handleErr);
     },
 
     registerRequest() {
-      return this.$http.post('/api/v1/users', {
-        client_id: this.$clientId,
-        client_secret: this.$clientSecret,
-        user: {
-          first_name: this.firstName,
-          last_name: this.lastName,
-          password: this.password,
-          email: this.email,
-          image_url: 'https://static.thenounproject.com/png/961-200.png',
-        },
-      }).then(({ code, data }) => {
-        if (code === 0) {
-          const { token, user } = data;
-          this.$store.dispatch('login', {
-            token,
-            user,
-          }).then(() => {
-            this.closeModal('Successfully Created An Account');
-          });
-        } else {
-          this.makeToast('Error', data.message, true);
-        }
-      }).catch(this.handleErr);
+      return this.register(this.firstName, this.lastName, this.email, this.password)
+        .then(({ code, data }) => {
+          if (code === 0) {
+            const { token, user } = data;
+            this.$store.dispatch('login', {
+              token,
+              user,
+            }).then(() => {
+              this.closeModal('Successfully Created An Account');
+            });
+          } else {
+            this.makeToast('Error', data.message, true);
+          }
+        }).catch(this.handleErr);
     },
 
     signOut() {
@@ -256,16 +242,11 @@ export default {
     * Forgotten password request
     */
     passwordReset() {
-      return this.$http.post('/api/v1/users/reset_password', {
-        user: {
-          email: this.email,
-        },
-        client_id: this.$clientId,
-        client_secret: this.$clientSecret,
-      }).then(({ code, message }) => {
-        this.makeToast(code === 0 ? 'Success' : 'Error', message, code !== 0);
-        this.$refs.modal.hide();
-      }).catch(this.handleErr);
+      return this.resetPassword({ email: this.email })
+        .then(({ code, message }) => {
+          this.makeToast(code === 0 ? 'Success' : 'Error', message, code !== 0);
+          this.$refs.modal.hide();
+        }).catch(this.handleErr);
     },
 
     loginOrRegister() {

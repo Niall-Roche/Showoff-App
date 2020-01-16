@@ -83,7 +83,7 @@ export default {
       }
     },
   },
-  async created() {
+  created() {
     this.widgetId = this.$route.params.id;
     if (this.widgetId) {
       this.getWidgetById(this.widgetId)

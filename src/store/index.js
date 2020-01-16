@@ -12,7 +12,6 @@ export default new Vuex.Store({
     isLoggedIn: !!localStorage.getItem('token'),
     authToken: `${localStorage.getItem('token_kind')} ${localStorage.getItem('token')}`,
     refreshToken: localStorage.getItem('refresh_token'),
-    // username: localStorage.getItem('username'),
   },
 
   mutations: {
@@ -56,6 +55,5 @@ export default new Vuex.Store({
     isLoggedIn: state => state.isLoggedIn,
     authToken: state => state.authToken,
     refreshToken: state => state.refreshToken,
-    // getUsername: state => state.username,
   },
 });

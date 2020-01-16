@@ -40,3 +40,5 @@ https://vuejsdevelopers.com/2019/01/22/vue-what-is-next-tick/
 https://dev.to/teroauralinna/global-http-request-and-response-handling-with-the-axios-interceptor-30ae
 
 https://sequelize.org/v5/identifiers.html
+
+https://stackoverflow.com/questions/52737078/how-can-you-use-axios-interceptors
