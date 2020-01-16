@@ -46,3 +46,5 @@ https://stackoverflow.com/questions/52737078/how-can-you-use-axios-interceptors
 https://router.vuejs.org/guide/advanced/navigation-guards.html#in-component-guards
 
 https://github.com/bootstrap-vue/bootstrap-vue/issues/3934
+
+https://github.com/charliekassel/vuejs-datepicker

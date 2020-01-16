@@ -16,7 +16,7 @@ export default {
     },
 
     changePassword(user) {
-      return this.$http.post('/api/v1/users/me/password', user);
+      return this.$http.post('/api/v1/users/me/password', { user });
     },
 
     resetPassword(user) {
@@ -27,7 +27,7 @@ export default {
       });
     },
 
-    login(username, password) {
+    loginUser(username, password) {
       return this.$http.post('/oauth/token', {
         grant_type: 'password',
         client_id: this.$clientId,

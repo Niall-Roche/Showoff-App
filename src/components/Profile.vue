@@ -21,8 +21,13 @@
           placeholder="Enter Last Name">
         </b-form-input>
       </b-form-group>
+
+      <b-form-group id="input-group-3" label="Date of Birth:">
+        <datepicker v-model="dob"></datepicker>
+      </b-form-group>
+
       <b-img width="75" height="75" class="m1" :src="imageSrc" alt="Circle image"></b-img>
-      <b-form-group id="input-group-3" label="Image URL:" label-for="image">
+      <b-form-group id="input-group-4" label="Image URL:" label-for="image">
         <b-form-input
           id="image"
           v-model="image"
@@ -32,18 +37,68 @@
       </b-form-group>
 
       <b-button type="submit" variant="primary" class="float-right">Save</b-button>
+      <b-button v-b-modal.password-change variant="info">Change Password</b-button>
     </b-form>
+
+    <b-modal
+      id="password-change"
+      title="Change Password"
+      ref="modal"
+      centered>
+        <b-form @submit="submitPasswordChange">
+          <b-form-group id="input-group-1" label="Current Password:" label-for="current">
+            <b-form-input
+              id="currrent"
+              v-model="current"
+              type="password"
+              required
+              placeholder="Enter Current Password">
+            </b-form-input>
+            <b-form-invalid-feedback id="input-live-feedback">
+              Current Password is required
+            </b-form-invalid-feedback>
+          </b-form-group>
+
+          <b-form-group id="input-group-2" label="New Password:" label-for="new">
+            <b-form-input
+              id="new"
+              v-model="newPassword"
+              type="password"
+              required
+              placeholder="Enter New Password">
+            </b-form-input>
+            <b-form-invalid-feedback id="input-live-feedback">
+              New Password is required
+            </b-form-invalid-feedback>
+          </b-form-group>
+
+          <b-button type="submit" variant="danger" class="float-right">
+            <b-spinner v-show="submitting" small></b-spinner>
+            <span v-show="!submitting">Change Password</span>
+          </b-button>
+      </b-form>
+      <template v-slot:modal-footer>
+        <div></div>
+      </template>
+    </b-modal>
   </b-container>
 </template>
 
 <script>
+import Datepicker from 'vuejs-datepicker';
 import UserManager from '@/mixins/UserManager';
 
 export default {
   name: 'profile',
+  components: {
+    Datepicker,
+  },
   mixins: [UserManager],
   data() {
     return {
+      submitting: false,
+      current: '',
+      newPassword: '',
       firstName: '',
       lastName: '',
       dob: null,
@@ -56,7 +111,7 @@ export default {
       this.updateProfile({
         first_name: this.firstName,
         last_name: this.lastName,
-        date_of_birth: this.dob,
+        date_of_birth: this.dob.getTime(),
         image_url: this.image,
       }).then(({ code, message }) => {
         if (code === 0) {
@@ -65,6 +120,23 @@ export default {
           this.makeToast('Error', message, true);
         }
       }).catch(this.handleErr);
+    },
+
+    submitPasswordChange() {
+      this.changePassword({ current_password: this.current, new_password: this.newPassword })
+        .then(({ code, message, data }) => {
+          if (code === 0) {
+            this.$store.dispatch('refreshToken', data.token)
+              .then(() => {
+                this.$nextTick(() => {
+                  this.$refs.modal.hide();
+                  this.makeToast('Success', 'Successfully Changed Password');
+                });
+              });
+          } else {
+            this.makeToast('Error', message, true);
+          }
+        }).catch(this.handleErr);
     },
   },
   created() {
@@ -75,6 +147,7 @@ export default {
           this.firstName = user.first_name;
           this.lastName = user.last_name;
           this.imageSrc = user.images.original_url;
+          this.dob = user.date_of_birth ? new Date(user.date_of_birth) : null;
         } else {
           this.makeToast('Error', message, true);
         }

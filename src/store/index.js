@@ -10,8 +10,6 @@ const LOGOUT = 'LOGOUT';
 export default new Vuex.Store({
   state: {
     isLoggedIn: !!localStorage.getItem('token'),
-    authToken: `${localStorage.getItem('token_kind')} ${localStorage.getItem('token')}`,
-    refreshToken: localStorage.getItem('refresh_token'),
   },
 
   mutations: {
@@ -49,11 +47,20 @@ export default new Vuex.Store({
         resolve();
       });
     },
+    refreshToken({ commit }, token) {
+      commit(LOGOUT);
+      return new Promise((resolve) => {
+        commit(LOGIN);
+        localStorage.setItem('token', token.access_token);
+        localStorage.setItem('token_kind', token.token_type);
+        localStorage.setItem('refresh_token', token.refresh_token);
+        commit(LOGIN_SUCCESS);
+        resolve();
+      });
+    },
   },
 
   getters: {
     isLoggedIn: state => state.isLoggedIn,
-    authToken: state => state.authToken,
-    refreshToken: state => state.refreshToken,
   },
 });

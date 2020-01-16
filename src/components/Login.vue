@@ -102,11 +102,11 @@
 </template>
 
 <script>
-import utils from '@/mixins/utils';
+import UserManager from '@/mixins/UserManager';
 
 export default {
   name: 'login',
-  mixins: [utils],
+  mixins: [UserManager],
   data() {
     return {
       login: true,
@@ -173,7 +173,7 @@ export default {
     },
 
     loginRequest() {
-      return this.login(this.email, this.password)
+      return this.loginUser(this.email, this.password)
         .then(({ code, data }) => {
           if (code === 0) {
             const { token } = data;
