@@ -99,11 +99,7 @@ export default {
       submitting: false,
       current: '',
       newPassword: '',
-      firstName: '',
-      lastName: '',
-      dob: null,
       image: '',
-      imageSrc: '',
     };
   },
   methods: {
@@ -139,19 +135,9 @@ export default {
         }).catch(this.handleErr);
     },
   },
-  created() {
+  mounted() {
     this.getMyProfile()
-      .then(({ code, message, data }) => {
-        if (code === 0) {
-          const { user } = data;
-          this.firstName = user.first_name;
-          this.lastName = user.last_name;
-          this.imageSrc = user.images.original_url;
-          this.dob = user.date_of_birth ? new Date(user.date_of_birth) : null;
-        } else {
-          this.makeToast('Error', message, true);
-        }
-      })
+      .then(this.handleUserData)
       .catch(this.handleErr);
   },
 };

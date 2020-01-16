@@ -1,8 +1,30 @@
 import utils from '@/mixins/utils';
 
 export default {
+  data() {
+    return {
+      firstName: '',
+      lastName: '',
+      fullName: '',
+      dob: null,
+      imageSrc: '',
+    };
+  },
   mixins: [utils],
   methods: {
+    handleUserData({ code, message, data }) {
+      if (code === 0) {
+        const { user } = data;
+        this.firstName = user.first_name;
+        this.lastName = user.last_name;
+        this.fullName = user.name;
+        this.imageSrc = user.images.original_url;
+        this.dob = user.date_of_birth ? new Date(user.date_of_birth) : null;
+      } else {
+        this.makeToast('Error', message, true);
+      }
+    },
+
     getMyProfile() {
       return this.$http('/api/v1/users/me');
     },
