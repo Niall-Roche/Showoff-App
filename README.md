@@ -48,3 +48,5 @@ https://router.vuejs.org/guide/advanced/navigation-guards.html#in-component-guar
 https://github.com/bootstrap-vue/bootstrap-vue/issues/3934
 
 https://github.com/charliekassel/vuejs-datepicker
+
+https://medium.com/swlh/handling-access-and-refresh-tokens-using-axios-interceptors-3970b601a5da

@@ -28,9 +28,13 @@
         :items="widgets"
         :busy="busy">
           <template v-slot:cell(user)="data">
-            <b-button variant="link" @click="$router.push(`/users/${data.value.id}/widgets`)">
+            <b-button
+              v-if="$store.getters.isLoggedIn"
+              variant="link"
+              @click="$router.push(`/users/${data.value.id}/widgets`)">
               {{ data.value.name }}
             </b-button>
+            <span v-if="!$store.getters.isLoggedIn">{{ data.value.name }}</span>
           </template>
           <template v-if="$store.getters.isLoggedIn" v-slot:cell(actions)="data">
             <!-- <b-button variant="info">Edit</b-button> -->

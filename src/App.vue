@@ -38,24 +38,41 @@ export default {
     },
     error => Promise.reject(error));
 
-    const errorHandler = (err) => {
-      if (err.response.status === 401) {
-        this.$store.dispatch('logout');
-        if (this.$route.name !== 'dashboard') {
-          this.$router.push('/');
-        }
-      } else if (err.response.status === 500) {
-        return Promise.reject(err);
-      }
-      return Promise.reject(err.response.data);
-    };
-
-    const successHandler = response => Promise.resolve(response.data);
-
     // Response Interceptor
     this.$http.interceptors.response.use(
-      response => successHandler(response),
-      error => errorHandler(error),
+      response => Promise.resolve(response.data),
+      (err) => {
+        const origReq = err.config;
+        if ((err.response.status === 401) && origReq.url === '/oauth/token') {
+          this.$store.dispatch('logout');
+          if (this.$route.name !== 'dashboard') {
+            this.$router.push('/');
+          }
+          return Promise.reject(err);
+        }
+
+        if (err.response.status === 401 && !origReq.doRetry) {
+          origReq.doRetry = true;
+          const refreshToken = localStorage.getItem('refresh_token');
+
+          return this.$http.post('/oauth/token', {
+            grant_type: 'refresh_token',
+            refresh_token: refreshToken,
+            client_id: this.$clientId,
+            client_secret: this.$clientSecret,
+          }).then(({ code, data }) => {
+            if (code === 0) {
+              const { token } = data;
+              this.$store.dispatch('refreshToken', token);
+              return this.$http(origReq);
+            }
+            return Promise.reject(err);
+          });
+        } if (err.response.status === 500) {
+          return Promise.reject(err);
+        }
+        return Promise.reject(err.response.data);
+      },
     );
   },
 };
