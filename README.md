@@ -1,4 +1,7 @@
-# showoff-project-v2
+# Showoff App
+
+## Description
+A simple VueJS project that interacts with a rest api that has user management and CRUD capabilities.
 
 ## Project setup
 ```
@@ -15,13 +18,9 @@ npm run serve
 npm run build
 ```
 
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+### Notes
+The fact that this is a SPA means the client id and client secret are stored in the browser.
+A potential improvement to the project would be to have an express router that makes the calls to the REST api and serves back the response to the browser. This would mean the client id and secret could be stored as an environment varianble on the server and it would never be available from the browser.
 
 ### Resources
 
@@ -50,3 +49,5 @@ https://github.com/bootstrap-vue/bootstrap-vue/issues/3934
 https://github.com/charliekassel/vuejs-datepicker
 
 https://medium.com/swlh/handling-access-and-refresh-tokens-using-axios-interceptors-3970b601a5da
+
+https://blog.sqreen.com/authentication-best-practices-vue/
