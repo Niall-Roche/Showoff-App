@@ -21,6 +21,9 @@ npm run serve
 npm run build
 ```
 
+### .env file
+There is an example.env file. Rename this to .env and add the client id and client secret
+
 ### Notes
 The fact that this is a SPA means the client id and client secret are stored in the browser.
 A potential improvement to the project would be to have an express router that makes the calls to the REST api and serves back the response to the browser. This would mean the client id and secret could be stored as an environment varianble on the server and it would never be available from the browser.
