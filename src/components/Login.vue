@@ -76,12 +76,36 @@
                 id="password"
                 v-model="password"
                 type="password"
+                :state="!login && !forgotten ? passwordsMatch : null"
+                aria-describedby="input-password-feedback"
                 required
                 placeholder="Enter Password">
               </b-form-input>
-              <b-form-invalid-feedback id="input-live-feedback">
-                Password is required
-              </b-form-invalid-feedback>
+            </b-form-group>
+
+            <b-form-group v-if="!forgotten && !login" id="input-group-4" label="Confirm Password:" label-for="confirm">
+              <b-form-input
+                id="confirm"
+                v-model="confirm"
+                type="password"
+                :state="!login && !forgotten ? passwordsMatch : null"
+                aria-describedby="input-password-feedback"
+                required
+                placeholder="Confirm Your Password">
+              </b-form-input>
+            </b-form-group>
+
+            <b-form-valid-feedback id="iinput-password-feedback">
+              Passwords must match
+            </b-form-valid-feedback>
+
+            <b-form-group v-if="!forgotten && !login" id="input-group-5" label="Image URL:" label-for="image">
+              <b-form-input
+                id="image"
+                v-model="image"
+                type="text"
+                placeholder="Enter an image URL for your profile">
+              </b-form-input>
             </b-form-group>
             <b-row>
               <b-button-group size="sm">
@@ -118,6 +142,8 @@ export default {
       lastName: '',
       email: '',
       password: '',
+      confirm: '',
+      image: '',
       validEmail: null,
       forgotten: false,
       submitting: false,
@@ -126,6 +152,10 @@ export default {
   computed: {
     usernameDisplay() {
       return this.$store.getters.isLoggedIn ? localStorage.getItem('username') : 'User';
+    },
+
+    passwordsMatch() {
+      return this.password === this.confirm;
     },
   },
   watch: {
@@ -198,7 +228,7 @@ export default {
 
     registerRequest() {
       // calls mixin function (mixins/usermanager)
-      return this.register(this.firstName, this.lastName, this.email, this.password)
+      return this.register(this.firstName, this.lastName, this.email, this.password, this.image)
         .then(({ code, data }) => {
           if (code === 0) {
             const { token, user } = data;

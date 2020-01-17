@@ -59,7 +59,7 @@ export default {
       });
     },
 
-    register(firstName, lastName, email, password) {
+    register(firstName, lastName, email, password, image) {
       return this.$http.post('/api/v1/users', {
         client_id: this.$clientId,
         client_secret: this.$clientSecret,
@@ -68,7 +68,7 @@ export default {
           last_name: lastName,
           password,
           email,
-          image_url: 'https://static.thenounproject.com/png/961-200.png',
+          image_url: image || 'https://static.thenounproject.com/png/961-200.png',
         },
       });
     },
