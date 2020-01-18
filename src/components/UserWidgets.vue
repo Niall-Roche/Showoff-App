@@ -68,10 +68,10 @@ export default {
         }).catch(this.handleErr);
     },
   },
-  mounted() {
+  async mounted() {
     this.userId = this.$route.params.id;
     // calls mixin function (mixins/usermanager)
-    this.getUserById(this.userId)
+    await this.getUserById(this.userId)
       // passed to mixin function (mixins/usermanager)
       .then(this.handleUserData)
       .catch(this.handleErr);
