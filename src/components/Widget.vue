@@ -20,7 +20,12 @@
           placeholder="Enter Description">
         </b-form-input>
       </b-form-group>
-      <b-container>
+      <b-container v-if="widgetId">
+        <b-row sm>
+          <h5 class="mt-3">{{ "This is a " + (kind === "hidden" ? "Hidden" : "Visible") + " Widget." }}</h5>
+        </b-row>
+      </b-container>
+      <b-container  v-if="!widgetId">
         <b-row sm>
           <h5 class="mt-3">{{ (hide ? "Show" : "Hide") + " This Widget?" }}</h5>
         </b-row>
@@ -44,6 +49,7 @@ export default {
       widgetId: null,
       name: '',
       description: '',
+      kind: '',
       hide: false,
     };
   },
@@ -85,10 +91,10 @@ export default {
     if (this.widgetId) {
       // calls mixin function (mixins/widgetmanager)
       this.getWidgetById(this.widgetId)
-        .then((widget) => {
-          this.name = widget.name;
-          this.description = widget.description;
-          this.kind = widget.kind;
+        .then(({ name, description, kind }) => {
+          this.name = name;
+          this.description = description;
+          this.kind = kind;
         });
     }
   },
